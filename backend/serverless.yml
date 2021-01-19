@@ -4,6 +4,12 @@ service:
 plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
+  - serverless-offline
+  - serverless-dynamodb-local
+
+custom:
+  serverless-offline:
+    port: 3003
 
 provider:
   name: aws
@@ -26,7 +32,6 @@ functions:
           path: todos
 
   # TODO: Configure this function
-  GetTodos:
   CreateTodo:
     handler: src/lambda/http/createTodo.handler
     events:
@@ -86,4 +91,3 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL # What attributes will be copied to an index
-
