@@ -10,7 +10,7 @@ import { TodoUpdate } from '../models/TodoUpdate'
 export class TodoAccess {
   constructor(
     private readonly docClient: DocumentClient = createDynamoDBClient(),
-    private readonly todosTable = process.env.TODOS_TABLE,
+    private readonly todosTable: string = process.env.TODOS_TABLE
   ) {}
 
   async getTodos(userId: string): Promise<TodoItem[]> {
@@ -39,7 +39,11 @@ export class TodoAccess {
     return todo
   }
 
-  async updateTodo(userId: string, todoId: string, todo: TodoUpdate): Promise<TodoUpdate> {
+  async updateTodo(
+    userId: string,
+    todoId: string,
+    todo: TodoUpdate
+  ): Promise<TodoUpdate> {
     await this.docClient
       .update({
         TableName: this.todosTable,
@@ -55,8 +59,8 @@ export class TodoAccess {
           ':done': todo.done,
           ':todoId': todoId
         },
-        ExpressionAttributeNames:{
-          "#name": "name"
+        ExpressionAttributeNames: {
+          '#name': 'name'
         }
       })
       .promise()
@@ -87,7 +91,7 @@ function createDynamoDBClient() {
       region: 'localhost',
       endpoint: 'http://localhost:8000'
     })
-    
+
     /*return new XAWS.DynamoDB.DocumentClient({
       region: 'localhost',
       endpoint: 'http://localhost:8000'
@@ -95,4 +99,45 @@ function createDynamoDBClient() {
   }
 
   //return new XAWS.DynamoDB.DocumentClient()
+}
+
+export async function getUploadUrl(
+  todoId: string,
+  userId: string
+): Promise<string> {
+  const validTodoId = await todoExists(todoId, userId)
+
+  if (!validTodoId) {
+    return 'NOT VALID'
+  }
+
+  const s3 = new AWS.S3({
+    signatureVersion: 'v4'
+  })
+
+  const bucketName = process.env.UPLOADS_S3_BUCKET
+  const urlExpiration = process.env.SIGNED_URL_EXPIRATION
+
+  return s3.getSignedUrl('putObject', {
+    Bucket: bucketName,
+    Key: todoId,
+    Expires: urlExpiration
+  })
+}
+
+async function todoExists(todoId: string, userId: string): Promise<boolean> {
+  const todosTable: string = process.env.TODOS_TABLE
+  const docClient: DocumentClient = createDynamoDBClient()
+  const result = await docClient
+    .get({
+      TableName: todosTable,
+      Key: {
+        todoId,
+        userId
+      }
+    })
+    .promise()
+
+  console.log('Get group: ', result)
+  return !!result.Item
 }
