@@ -9,17 +9,15 @@ import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 
 const todoAccess = new TodoAccess()
 
-export async function getTodos(jwtToken: string): Promise<TodoItem[]> {
-  const userId: string = parseUserId(jwtToken)
+export async function getTodos(userId: string): Promise<TodoItem[]> {
   return todoAccess.getTodos(userId)
 }
 
 export async function createTodo(
   createTodoRequest: CreateTodoRequest,
-  jwtToken: string
+  userId: string
 ): Promise<TodoItem> {
   const todoId: string = uuid.v4()
-  const userId: string = parseUserId(jwtToken)
 
   return todoAccess.createTodo({
     todoId: todoId,
@@ -34,17 +32,14 @@ export async function createTodo(
 export async function updateTodo(
   todoId: string,
   updateTodoRequest: UpdateTodoRequest,
-  jwtToken: string
+  userId: string
 ): Promise<TodoUpdate> {
-  const userId: string = parseUserId(jwtToken)
-
   return todoAccess.updateTodo(userId, todoId, updateTodoRequest)
 }
 
 export async function deleteTodo(
   todoID: string,
-  jwtToken: string
+  userId: string
 ): Promise<string> {
-  const userId = parseUserId(jwtToken)
   return todoAccess.deleteTodo(todoID, userId)
 }
