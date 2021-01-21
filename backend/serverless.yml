@@ -4,12 +4,21 @@ service:
 plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
-  - serverless-offline
   - serverless-dynamodb-local
+  - serverless-offline
+  
 
 custom:
   serverless-offline:
     port: 3003
+  dynamodb:
+    stages:
+      - ${self:provider.stage}
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+      
 
 provider:
   name: aws
@@ -92,14 +101,14 @@ resources:
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S
-          - AttributeName: dueDate
+          - AttributeName: createdAt
             AttributeType: S
           - AttributeName: todoId
             AttributeType: S
         KeySchema:
           - AttributeName: userId
             KeyType: HASH
-          - AttributeName: dueDate
+          - AttributeName: createdAt
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.TODOS_TABLE}
