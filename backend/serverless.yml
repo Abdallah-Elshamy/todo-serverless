@@ -29,7 +29,6 @@ provider:
 
   environment:
     TODOS_TABLE: todos
-    INDEX_NAME: todoIndex
 
 functions:
 
@@ -105,23 +104,12 @@ resources:
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S
-          - AttributeName: createdAt
-            AttributeType: S
           - AttributeName: todoId
             AttributeType: S
         KeySchema:
           - AttributeName: userId
             KeyType: HASH
-          - AttributeName: createdAt
+          - AttributeName: todoId
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.TODOS_TABLE}
-        LocalSecondaryIndexes:
-          - IndexName: ${self:provider.environment.INDEX_NAME}
-            KeySchema:
-              - AttributeName: userId
-                KeyType: HASH
-              - AttributeName: todoId
-                KeyType: RANGE
-            Projection:
-              ProjectionType: ALL # What attributes will be copied to an index
