@@ -1,9 +1,8 @@
 import * as uuid from 'uuid'
 
-import { parseUserId } from '../auth/utils'
 import { TodoItem } from '../models/TodoItem'
 import { TodoUpdate } from '../models/TodoUpdate'
-import { TodoAccess } from '../dataLayer/todosAccess'
+import { TodoAccess, getUploadUrl } from '../dataLayer/todosAccess'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 
@@ -42,4 +41,11 @@ export async function deleteTodo(
   userId: string
 ): Promise<string> {
   return todoAccess.deleteTodo(todoID, userId)
+}
+
+export async function generateUploadUrl(
+  todoID: string,
+  userId: string
+): Promise<string> {
+  return getUploadUrl(todoID, userId)
 }
