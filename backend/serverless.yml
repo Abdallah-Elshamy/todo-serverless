@@ -27,6 +27,10 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
 
+  environment:
+    TODOS_TABLE: todos
+    INDEX_NAME: todoIndex
+
 functions:
 
   Auth:
