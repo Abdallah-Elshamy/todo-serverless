@@ -5,9 +5,9 @@ plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
   - serverless-dynamodb-local
+  - serverless-s3-local
   - serverless-offline
   
-
 custom:
   serverless-offline:
     port: 3003
@@ -18,6 +18,9 @@ custom:
       port: 8000
       inMemory: true
       migrate: true
+  s3:
+    host: localhost
+    directory: /tmp
       
 
 provider:
