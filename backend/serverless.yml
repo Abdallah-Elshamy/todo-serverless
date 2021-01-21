@@ -33,6 +33,7 @@ provider:
   environment:
     TODOS_TABLE: todos
     UPLOADS_S3_BUCKET: serverless-todo-app-${self:provider.stage}-qwecdx
+    SIGNED_URL_EXPIRATION: 300
 
 functions:
 
