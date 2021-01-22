@@ -33,7 +33,7 @@ provider:
   environment:
     TODOS_TABLE: todos
     UPLOADS_S3_BUCKET: serverless-todo-app-${self:provider.stage}-qwecdx
-    SIGNED_URL_EXPIRATION: 3000
+    SIGNED_URL_EXPIRATION: 1000
     AUTH0_DOMAIN: todo-serverless.us.auth0.com
 
 functions:
@@ -115,6 +115,17 @@ functions:
           method: post
           path: todos/{todoId}/attachment
           authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - s3:GetSignedUrl
+          - s3:PutObject
+          - s3:GetObject
+        Resource: arn:aws:s3:::${self:provider.environment.UPLOADS_S3_BUCKET}/*
+      - Effect: Allow
+        Action:
+          - dynamodb:GetItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
 
 resources:
   Resources:
