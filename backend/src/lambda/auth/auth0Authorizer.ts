@@ -6,7 +6,7 @@ import { createLogger } from '../../utils/logger'
 import Axios, { AxiosResponse } from 'axios'
 import { Jwt } from '../../auth/Jwt'
 import { JwtPayload } from '../../auth/JwtPayload'
-import { jwkToPem } from 'jwk-to-pem'
+import * as jwkToPem from 'jwk-to-pem'
 
 const logger = createLogger('auth')
 
@@ -55,17 +55,17 @@ export const handler = async (
 async function verifyToken(authHeader: string): Promise<JwtPayload> {
   const token = getToken(authHeader)
   const jwt: Jwt = decode(token, { complete: true }) as Jwt
-
   if (!jwt.header.kid) throw new Error('No key in the header')
 
   var response: AxiosResponse<any>
 
   try {
     response = await Axios.get(jwksUrl)
-    console.log(response)
+    logger.info("got the jwks")
   } catch (error) {
-    console.error(error)
+    logger.error(error)
   }
+  
 
   const key = response.data.keys.find((key) => key.kid === jwt.header.kid)
 
