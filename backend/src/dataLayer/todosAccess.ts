@@ -101,16 +101,7 @@ function createDynamoDBClient() {
   //return new XAWS.DynamoDB.DocumentClient()
 }
 
-export async function getUploadUrl(
-  todoId: string,
-  userId: string
-): Promise<string> {
-  const validTodoId = await todoExists(todoId, userId)
-
-  if (!validTodoId) {
-    return 'NOT VALID'
-  }
-
+export async function getUploadUrl(todoId: string): Promise<string> {
   const s3 = new AWS.S3({
     signatureVersion: 'v4'
   })
@@ -125,7 +116,10 @@ export async function getUploadUrl(
   })
 }
 
-async function todoExists(todoId: string, userId: string): Promise<boolean> {
+export async function todoExists(
+  todoId: string,
+  userId: string
+): Promise<boolean> {
   const todosTable: string = process.env.TODOS_TABLE
   const docClient: DocumentClient = createDynamoDBClient()
   const result = await docClient

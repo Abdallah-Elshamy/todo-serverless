@@ -2,7 +2,7 @@ import * as uuid from 'uuid'
 
 import { TodoItem } from '../models/TodoItem'
 import { TodoUpdate } from '../models/TodoUpdate'
-import { TodoAccess, getUploadUrl } from '../dataLayer/todosAccess'
+import { TodoAccess, getUploadUrl, todoExists } from '../dataLayer/todosAccess'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 
@@ -48,4 +48,11 @@ export async function generateUploadUrl(
   userId: string
 ): Promise<string> {
   return getUploadUrl(todoID, userId)
+}
+
+export async function validTodoId(
+  todoID: string,
+  userId: string
+): Promise<boolean> {
+  return todoExists(todoID, userId)
 }
