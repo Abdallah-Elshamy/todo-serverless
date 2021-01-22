@@ -61,6 +61,10 @@ functions:
           method: post
           path: todos
           cors: true
+          request:
+            # Schema that will be used to validate incoming requests
+            schema:
+              application/json: ${file(src/models/createTodoReq.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -74,6 +78,10 @@ functions:
           method: patch
           path: todos/{todoId}
           cors: true
+          request:
+            # Schema that will be used to validate incoming requests
+            schema:
+              application/json: ${file(src/models/updateTodoReq.json)}
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -93,7 +101,6 @@ functions:
           - dynamodb: DeleteItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
 
-  # TODO: Configure this function
   GenerateUploadUrl:
     handler: src/lambda/http/generateUploadUrl.handler
     events:
