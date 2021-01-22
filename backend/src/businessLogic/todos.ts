@@ -5,10 +5,13 @@ import { TodoUpdate } from '../models/TodoUpdate'
 import { TodoAccess, getUploadUrl, todoExists } from '../dataLayer/todosAccess'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
+import { createLogger } from '../utils/logger'
 
 const todoAccess = new TodoAccess()
+const logger = createLogger('business')
 
 export async function getTodos(userId: string): Promise<TodoItem[]> {
+  logger.info(`getting todos of user: ${userId}`)
   return todoAccess.getTodos(userId)
 }
 
@@ -17,6 +20,8 @@ export async function createTodo(
   userId: string
 ): Promise<TodoItem> {
   const todoId: string = uuid.v4()
+
+  logger.info(`Creating todo: ${todoId}`)
 
   return todoAccess.createTodo({
     todoId: todoId,
@@ -33,23 +38,27 @@ export async function updateTodo(
   updateTodoRequest: UpdateTodoRequest,
   userId: string
 ): Promise<TodoUpdate> {
+  logger.info(`Updating todo: ${todoId}`)
   return todoAccess.updateTodo(userId, todoId, updateTodoRequest)
 }
 
 export async function deleteTodo(
-  todoID: string,
+  todoId: string,
   userId: string
 ): Promise<string> {
-  return todoAccess.deleteTodo(todoID, userId)
+  logger.info(`Updating todo: ${todoId}`)
+  return todoAccess.deleteTodo(todoId, userId)
 }
 
-export async function generateUploadUrl(todoID: string): Promise<string> {
-  return getUploadUrl(todoID)
+export async function generateUploadUrl(todoId: string): Promise<string> {
+  logger.info(`Generating upload URL for todo: ${todoId}`)
+  return getUploadUrl(todoId)
 }
 
 export async function validTodoId(
-  todoID: string,
+  todoId: string,
   userId: string
 ): Promise<boolean> {
-  return todoExists(todoID, userId)
+  logger.info(`Validating todo: ${todoId}`)
+  return todoExists(todoId, userId)
 }
