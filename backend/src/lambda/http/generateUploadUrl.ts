@@ -5,17 +5,17 @@ import {
   APIGatewayProxyResult,
   APIGatewayProxyHandler
 } from 'aws-lambda'
-import { generateUploadUrl } from '../../businessLogic/todos'
+import { validTodoId, generateUploadUrl } from '../../businessLogic/todos'
 import { getUserId } from '../utils'
 
 export const handler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
   const todoId = event.pathParameters.todoId
+  const userId = getUserId(event)
+  const isValid = await validTodoId(todoId, userId)
 
-  const url: string = await generateUploadUrl(todoId, getUserId(event))
-
-  if (url === 'NOT VALID') {
+  if (!isValid) {
     return {
       statusCode: 404,
       headers: {
@@ -26,6 +26,8 @@ export const handler: APIGatewayProxyHandler = async (
       })
     }
   }
+
+  const url: string = await generateUploadUrl(todoId)
 
   return {
     statusCode: 200,

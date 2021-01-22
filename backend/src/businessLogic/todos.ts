@@ -43,11 +43,8 @@ export async function deleteTodo(
   return todoAccess.deleteTodo(todoID, userId)
 }
 
-export async function generateUploadUrl(
-  todoID: string,
-  userId: string
-): Promise<string> {
-  return getUploadUrl(todoID, userId)
+export async function generateUploadUrl(todoID: string): Promise<string> {
+  return getUploadUrl(todoID)
 }
 
 export async function validTodoId(
