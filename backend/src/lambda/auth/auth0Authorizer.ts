@@ -3,9 +3,10 @@ import 'source-map-support/register'
 
 import { verify, decode } from 'jsonwebtoken'
 import { createLogger } from '../../utils/logger'
-import Axios from 'axios'
+import Axios, { AxiosResponse } from 'axios'
 import { Jwt } from '../../auth/Jwt'
 import { JwtPayload } from '../../auth/JwtPayload'
+import { jwkToPem } from 'jwk-to-pem'
 
 const logger = createLogger('auth')
 
@@ -55,10 +56,29 @@ async function verifyToken(authHeader: string): Promise<JwtPayload> {
   const token = getToken(authHeader)
   const jwt: Jwt = decode(token, { complete: true }) as Jwt
 
-  // TODO: Implement token verification
-  // You should implement it similarly to how it was implemented for the exercise for the lesson 5
-  // You can read more about how to do this here: https://auth0.com/blog/navigating-rs256-and-jwks/
-  return undefined
+  if (!jwt.header.kid) throw new Error('No key in the header')
+
+  var response: AxiosResponse<any>
+
+  try {
+    response = await Axios.get(jwksUrl)
+    console.log(response)
+  } catch (error) {
+    console.error(error)
+  }
+
+  const key = response.data.keys.find((key) => key.kid === jwt.header.kid)
+
+  if (!key) throw new Error('Unable to find the appropriate key.')
+
+  try {
+    return verify(token, jwkToPem(key), {
+      issuer: `https://${process.env.AUTH0_DOMAIN}/`,
+      algorithms: ['RS256']
+    }) as JwtPayload
+  } catch (err) {
+    throw new Error(err)
+  }
 }
 
 function getToken(authHeader: string): string {
