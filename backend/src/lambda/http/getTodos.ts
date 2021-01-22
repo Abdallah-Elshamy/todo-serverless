@@ -1,13 +1,23 @@
 import 'source-map-support/register'
-import { getTodos } from '../../businessLogic/todos';
+import { getTodos } from '../../businessLogic/todos'
 import { TodoItem } from '../../models/TodoItem'
 import { getUserId } from '../utils'
 
-import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
+import {
+  APIGatewayProxyEvent,
+  APIGatewayProxyResult,
+  APIGatewayProxyHandler
+} from 'aws-lambda'
+import { createLogger } from '../../utils/logger'
 
-export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+const logger = createLogger('get todos')
 
-  const todos: TodoItem[] = await getTodos(getUserId(event))
+export const handler: APIGatewayProxyHandler = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
+  const userId: string = getUserId(event)
+  logger.info(`getting todos of user: ${userId}`)
+  const todos: TodoItem[] = await getTodos(userId)
   return {
     statusCode: 200,
     headers: {
@@ -15,6 +25,6 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     },
     body: JSON.stringify({
       items: todos
-    })  
+    })
   }
 }

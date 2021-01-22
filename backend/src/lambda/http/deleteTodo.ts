@@ -7,6 +7,9 @@ import {
 } from 'aws-lambda'
 import { validTodoId, deleteTodo } from '../../businessLogic/todos'
 import { getUserId } from '../utils'
+import { createLogger } from '../../utils/logger'
+
+const logger = createLogger('delete todo')
 
 export const handler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
@@ -16,6 +19,7 @@ export const handler: APIGatewayProxyHandler = async (
   const isValid = await validTodoId(todoId, userId)
 
   if (!isValid) {
+    logger.error("Wrong todoId")
     return {
       statusCode: 404,
       headers: {
@@ -26,6 +30,8 @@ export const handler: APIGatewayProxyHandler = async (
       })
     }
   }
+
+  logger.info(`deleting todo: ${todoId}`)
 
   await deleteTodo(todoId, userId)
 
