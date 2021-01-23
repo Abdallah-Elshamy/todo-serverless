@@ -81,6 +81,26 @@ export class TodoAccess {
 
     return todoId
   }
+
+  async AddAttachmentUrl(
+    todoId: string,
+    userId: string,
+    uploadUrl: string
+  ): Promise<void> {
+    await this.docClient
+      .update({
+        TableName: this.todosTable,
+        Key: {
+          userId: userId,
+          todoId: todoId
+        },
+        UpdateExpression: 'set attachmentUrl = :URL',
+        ExpressionAttributeValues: {
+          ":URL": uploadUrl.split("?")[0]
+        }
+      })
+      .promise()
+  }
 }
 
 function createDynamoDBClient() {

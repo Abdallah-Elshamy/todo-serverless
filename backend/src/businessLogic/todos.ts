@@ -62,3 +62,12 @@ export async function validTodoId(
   logger.info(`Validating todo: ${todoId}`)
   return todoExists(todoId, userId)
 }
+
+export async function addAttachmentUrl(
+  todoId: string,
+  userId: string,
+  uploadUrl: string
+): Promise<void> {
+  logger.info(`adding attachment URL for todo: ${todoId}`)
+  todoAccess.AddAttachmentUrl(todoId, userId, uploadUrl)
+}

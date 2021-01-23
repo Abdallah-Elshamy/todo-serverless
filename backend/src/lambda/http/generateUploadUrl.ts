@@ -5,7 +5,7 @@ import {
   APIGatewayProxyResult,
   APIGatewayProxyHandler
 } from 'aws-lambda'
-import { validTodoId, generateUploadUrl } from '../../businessLogic/todos'
+import { validTodoId, generateUploadUrl, addAttachmentUrl } from '../../businessLogic/todos'
 import { getUserId } from '../utils'
 import { createLogger } from '../../utils/logger'
 
@@ -34,6 +34,10 @@ export const handler: APIGatewayProxyHandler = async (
   logger.info(`generating URL for todo: ${todoId}`)
 
   const url: string = await generateUploadUrl(todoId)
+
+  logger.info(`adding attachment URL for todo: ${todoId}`)
+
+  await addAttachmentUrl(todoId, userId, url)
 
   return {
     statusCode: 200,
