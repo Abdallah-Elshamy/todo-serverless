@@ -69,5 +69,5 @@ export async function addAttachmentUrl(
   uploadUrl: string
 ): Promise<void> {
   logger.info(`adding attachment URL for todo: ${todoId}`)
-  todoAccess.AddAttachmentUrl(todoId, userId, uploadUrl)
+  return todoAccess.AddAttachmentUrl(todoId, userId, uploadUrl)
 }
