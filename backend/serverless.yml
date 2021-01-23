@@ -115,6 +115,7 @@ functions:
           method: post
           path: todos/{todoId}/attachment
           authorizer: Auth
+          cors: true
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -125,6 +126,7 @@ functions:
       - Effect: Allow
         Action:
           - dynamodb:GetItem
+          - dynamodb:UpdateItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
 
 resources:
